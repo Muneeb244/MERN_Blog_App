@@ -4,9 +4,6 @@ import Blogs from '../../components/Blogs'
 
 export default function Home() {
     return (
-        <main>
-            <Header />
             <Blogs />
-        </main>
     )
 }

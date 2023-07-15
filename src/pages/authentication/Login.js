@@ -1,18 +1,50 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import * as yup from 'yup';
 import { Formik } from "formik";
 import ErrorMessage from '../../components/ErrorMessage';
+import Axios from 'axios';
+import { ThreeDots } from 'react-loading-icons';
+import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import UserContext from '../../context/UserContext';
 
 function Login() {
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+  const navigate = useNavigate();
+
+  const {setUserToken} = useContext(UserContext);
 
   const userSchema = yup.object().shape({
     email: yup.string().required().email(),
     password: yup.string().min(6, "Password should be 6 characters minimum").required(),
   })
 
-  const handleSubmit = (values, {resetForm}) => {
-    console.log(values);
-    resetForm();
+  
+  const handleSubmit = async (values, {resetForm}) => {
+    setIsLoading(true);
+    setMessage(null);
+    await Axios.post('http://localhost:5000/api/auth/signin', values)
+      .then(res => {
+        console.log(res.data)
+        if(res.data?.token) {
+          Cookies.set('token', res.data.token)
+          setIsLoading(false);
+          setUserToken(res.data.token)
+          return navigate('/')
+        }
+        if(res.data?.error) {
+          setIsLoading(false);
+          setMessage(res.data.error)
+        }
+      })
+      .catch(err => {
+        console.log(err)
+        setIsLoading(false);
+      })
+
+    // resetForm();
   }
 
   return (
@@ -25,6 +57,7 @@ function Login() {
       {({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => (
         <form action='' className='flex flex-col items-center justify-items-center'>
           <h1 className='text-3xl font-bold mt-10'>Sign In</h1>
+          {message && <h3 className='font-bold text-base text-red-500 mt-2'>{message}</h3>}
           <input
             type="text"
             placeholder='email'
@@ -50,7 +83,9 @@ function Login() {
             error={errors["password"]}
             visible={touched["password"]}
           />
-          <button className='shadow bg-black text-white font-bold py-2 px-4 rounded mt-10' onClick={handleSubmit} type='submit'>Login</button>
+          <button className='shadow bg-black text-white font-bold py-2 px-4 rounded mt-10' onClick={handleSubmit} type='submit'>
+          {isLoading ? <ThreeDots stroke='white' fill='white' height={15} /> : "Login"}
+          </button>
         </form>
       )}
     </Formik>

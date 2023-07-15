@@ -5,18 +5,31 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const bcrypt = require('bcrypt');
 
-router.get('/', (req, res) => {
-    res.send('Hello World');
+router.get('/', async (req, res) => {
+    const user = await User.find({});
+    res.json(user);
+});
+
+router.get('/profile', async (req, res) => {
+    const {token} = req.body;
+    if(!token) return res.json({error: 'No token provided'})
+    const decoded = jwt.verify(token, process.env.jwtSecret);
+    if(!decoded) return res.json({error: 'Invalid token'})
+    
+    const user = User.findById(decoded.id).select('-password');
+    if(!user) return res.json({error: 'User not found'})
+    console.log(user)
+    res.json({user});
 })
 
 router.post('/signup', async (req, res) => {
     const { name, email, password } = req.body;
 
     const { error } = validateSignup(req.body);
-    if (error) return res.json({ message: error.details[0].message })
+    if (error) return res.json({ error: error.details[0].message })
 
-    const duplicate = user.findOne({ email });
-    if (duplicate) return res.json({ message: 'User already exists' })
+    const duplicate = await User.findOne({ email });
+    if (duplicate) return res.json({ error: 'User already exists' })
 
     let user = new User({
         name, email, password
@@ -25,8 +38,8 @@ router.post('/signup', async (req, res) => {
     user.save()
         .then(user => {
             const token = jwt.sign({ id: user._id }, process.env.jwtSecret, { expiresIn: 3600 })
-            res.json(token);
-        }).catch(err => res.json({ message: err }));
+            res.json({token: token});
+        }).catch(err => res.json({ error: err }));
 
 });
 
@@ -35,17 +48,15 @@ router.post('/signup', async (req, res) => {
 router.post('/signin', async (req, res) => {
     const { email, password } = req.body;
 
-    const { error } = validateSignup(req.body);
-    if (error) res.json({ message: error.details[0].message })
 
     let user = await User.findOne({ email });
-    if (!user) return res.json({ message: 'Invalid email/password' })
+    if (!user) return res.json({ error: 'Invalid email/password' })
 
     const validPassword = await bcrypt.compare(password, user.password);
-    if(!validPassword) return res.json({ message: 'Invalid email/password' })
+    if(!validPassword) return res.json({ error: 'Invalid email/password' })
 
     const token = jwt.sign({id: user.id, name: user.name}, process.env.jwtSecret, { expiresIn: 3600 })
-    res.json(token);
+    res.json({token});
 
 })
 
