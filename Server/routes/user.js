@@ -11,14 +11,14 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/profile', async (req, res) => {
-    const {token} = req.body;
+    const token = req.headers['authorization'];
     if(!token) return res.json({error: 'No token provided'})
+
     const decoded = jwt.verify(token, process.env.jwtSecret);
     if(!decoded) return res.json({error: 'Invalid token'})
     
-    const user = User.findById(decoded.id).select('-password');
+    const user = await User.findById(decoded.id).select('-password');
     if(!user) return res.json({error: 'User not found'})
-    console.log(user)
     res.json({user});
 })
 
@@ -37,7 +37,7 @@ router.post('/signup', async (req, res) => {
 
     user.save()
         .then(user => {
-            const token = jwt.sign({ id: user._id }, process.env.jwtSecret, { expiresIn: 3600 })
+            const token = jwt.sign({ id: user._id }, process.env.jwtSecret)
             res.json({token: token});
         }).catch(err => res.json({ error: err }));
 
@@ -55,7 +55,7 @@ router.post('/signin', async (req, res) => {
     const validPassword = await bcrypt.compare(password, user.password);
     if(!validPassword) return res.json({ error: 'Invalid email/password' })
 
-    const token = jwt.sign({id: user.id, name: user.name}, process.env.jwtSecret, { expiresIn: 3600 })
+    const token = jwt.sign({id: user.id, name: user.name}, process.env.jwtSecret)
     res.json({token});
 
 })

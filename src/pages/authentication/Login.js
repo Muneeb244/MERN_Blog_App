@@ -21,13 +21,12 @@ function Login() {
     password: yup.string().min(6, "Password should be 6 characters minimum").required(),
   })
 
-  
+
   const handleSubmit = async (values, {resetForm}) => {
     setIsLoading(true);
     setMessage(null);
     await Axios.post('http://localhost:5000/api/auth/signin', values)
       .then(res => {
-        console.log(res.data)
         if(res.data?.token) {
           Cookies.set('token', res.data.token)
           setIsLoading(false);
@@ -44,7 +43,7 @@ function Login() {
         setIsLoading(false);
       })
 
-    // resetForm();
+    resetForm();
   }
 
   return (
