@@ -1,28 +1,29 @@
 import Axios from 'axios';
 import Cookies from 'js-cookie';
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import UserContext from '../context/UserContext';
 
 
 export default function Header() {
 
-    // const [token, setToken] = useState(Cookies.get('token'))
-
-    const { user, setUser, userToken, setUserToken } = useContext(UserContext);
+    const {setUser, setUserToken, userToken } = useContext(UserContext);
+    const [token, setToken] = useState(null);
     const navigate = useNavigate();
 
 
     useEffect(() => {
         document.title = "Blog"
         let token = Cookies.get('token');
-        setUserToken(token)
-    }, [])
+        setToken(token);
+        console.log("from header",token)
+    }, [userToken])
 
 
     const logout = () => {
         Cookies.remove('token')
         setUserToken(null)
+        setToken(null)
         setUser({})
         navigate('/')
     }
@@ -33,8 +34,8 @@ export default function Header() {
                 <img src={require('../assets/images/blog.png')} alt='logo' className='w-25 h-10' />
             </Link>
             <nav className='flex justify-around w-1/6'>
-                <Link to={userToken ? '/create' : "/login"} className='text-lg font-bold'>{userToken ? "Create new post" : "Login"}</Link>
-                <Link to={userToken ? '' : "/register"} className='text-lg font-bold' onClick={logout}>{userToken ? "logout" : "SignUp"}</Link>
+                <Link to={token ? '/create' : "/login"} className='text-lg font-bold'>{token ? "Create new post" : "Login"}</Link>
+                <Link to={token ? '' : "/register"} className='text-lg font-bold' onClick={token ? logout : ""}>{token ? "logout" : "SignUp"}</Link>
             </nav>
         </header>
     )

@@ -1,9 +1,14 @@
 import React from 'react'
 import FormikForm from '../../components/FormikForm'
+import { useLocation } from 'react-router-dom';
 
 function Edit() {
+  const location = useLocation();
+  const { id } = location.state;
+  if(location.pathname.includes('edit')) 
+    // const { id } = location.state;
   return (
-    <FormikForm edit={true}/>
+    <FormikForm edit={true} editId={id}/>
   )
 }
 

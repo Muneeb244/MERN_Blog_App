@@ -6,30 +6,41 @@ import Axios from 'axios';
 import { ThreeDots } from 'react-loading-icons';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import UserContext from '../context/UserContext';
+// import UserContext from '../context/UserContext';
+import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import Lottie from 'lottie-react';
+import loading from '../lottieFile/loading.json';
 
-function FormikForm({ edit }) {
+function FormikForm({ edit, editId }) {
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState(null);
-    const { user, setUser, userToken } = useContext(UserContext)
+    // const { user, setUser, userToken } = useContext(UserContext);
+    const [blog, setBlog] = useState(null);
+
+
+    const navigate = useNavigate();
 
     const ref = React.useRef();
 
     useEffect(() => {
-        document.title = "Create Post"
+        document.title = "Create Post";
 
-        {!edit && Axios.get('http://localhost:5000/api/auth/profile', {
-            headers: {
-                'authorization': userToken
+        try {
+            {
+                editId && Axios.get(`http://localhost:5000/api/blog/${editId}`)
+                    .then(res => {
+                        setBlog(res.data.blog)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        // setMessage("Something went wrong");
+                        // navigate('/login');
+                    })
             }
-        })
-        .then(res => {
-            setUser(res.data.user)
-        })
-        .catch(err => {
-            console.log(err)
-            setMessage("Something went wrong");
-        })}
+        } catch (error) {
+            console.log("from form main catch:", error)
+        }
     }, [])
 
 
@@ -55,14 +66,13 @@ function FormikForm({ edit }) {
         form.set('title', values.title);
         form.set('summary', values.summary);
         form.set('description', values.description);
-        form.set('author', user.name)
-        form.set('authorId', user._id);
         setIsLoading(true);
         setMessage(null);
         try {
             Axios.post('http://localhost:5000/api/blog/post', form, {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'multipart/form-data',
+                    'authorization': Cookies.get('token')
                 }
             })
                 .then(res => {
@@ -76,23 +86,65 @@ function FormikForm({ edit }) {
                     }
                 })
                 .catch(err => {
+                    console.log("from create first catch", err)
                     setMessage("Something went wrong");
                     setIsLoading(false);
                 })
         } catch (error) {
+            console.log("from create first catch", error)
             setMessage("Something went wrong");
             setIsLoading(false);
         }
-        resetForm();    }
+        resetForm();
+    }
 
-    const handleEdit = (values, {resetForm}) => {
-        console.log("handleEdit",values)
+    const handleEdit = (values, { resetForm }) => {
+        const form = new FormData();
+        form.set('image', values.image);
+        form.set('title', values.title);
+        form.set('summary', values.summary);
+        form.set('description', values.description);
+        setIsLoading(true);
+        setMessage(null);
+        try {
+            Axios.put(`http://localhost:5000/api/blog/post/${editId}`, form, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+                .then(res => {
+                    if (res.data?.blog) {
+                        setIsLoading(false);
+                        setMessage("post updated successfully");
+                    }
+                    if (res.data?.error) {
+                        setIsLoading(false);
+                        setMessage(res.data.error)
+                    }
+                })
+                .catch(err => {
+                    console.log("from create first catch", err)
+                    setMessage("Something went wrong");
+                    setIsLoading(false);
+                })
+        } catch (error) {
+            console.log("from create second catch", error)
+            setMessage("Something went wrong");
+            setIsLoading(false);
+        }
+        resetForm();
     }
 
 
     return (
+        <>
+        {!blog && <Lottie animationData={loading} style={{ width: '100%', height: "100vh", position: 'absolute', top: 0, backgroundColor: '#fff', zIndex: 1 }} />}
         <Formik
-            initialValues={{ title: "", summary: "", description: "", image: "" }}
+            initialValues={edit ?
+                { title: blog?.title, summary: blog?.summary, description: blog?.description, image: blog?.image }
+                :
+                { title: "", summary: "", description: "", image: "" }
+            }
             validationSchema={!edit && blogSchema}
             onSubmit={edit ? handleEdit : handleSubmit}
             enableReinitialize={true}
@@ -100,7 +152,7 @@ function FormikForm({ edit }) {
             {({ values, setFieldValue, errors, touched, handleChange, handleBlur, handleSubmit }) => (
                 <form action='' className='flex flex-col items-center justify-items-center'>
                     <h1 className='text-3xl font-bold mt-10'>{edit ? "Edit post" : "Create new post"}</h1>
-                    {message && <h3 className={message === edit ? "post updated successfully" : "post created successfully" ? 'font-bold text-base text-green-500 mt-2' : 'font-bold text-base text-red-500 mt-2'}>{message}</h3>}
+                    {message && <h3 className={message === "Something went wrong" ? 'font-bold text-base text-red-500 mt-2' : 'font-bold text-base text-green-500 mt-2'}>{message}</h3>}
                     <input
                         type="text"
                         placeholder='title'
@@ -159,6 +211,7 @@ function FormikForm({ edit }) {
                 </form>
             )}
         </Formik>
+        </>
     )
 }
 

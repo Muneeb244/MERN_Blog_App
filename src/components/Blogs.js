@@ -12,6 +12,7 @@ function Blogs() {
         Axios.get('http://localhost:5000/api/blog')
         .then((res) => setBlogs(res.data.blogs))
         .catch(err => console.log(err))
+        console.log("",blogs)
     }, [])
 
     // const blogs = [{
@@ -48,7 +49,7 @@ function Blogs() {
 
         <div className='flex flex-col w-full h-screen items-center my-5'>
             {blogs ? blogs.map(blog => (
-                <BlogCard key={blog._id} id={blog._id} image={blog.image} title={blog.title} description={blog.description} summary={blog.summary} author={blog.author} date={blog.date} authorId={blog.authorId} />
+                <BlogCard key={blog._id} id={blog._id} image={blog.image} title={blog.title} description={blog.description} summary={blog.summary} author={blog.author.name} date={blog.date} />
             )) : <BlogSkeleton />}
         </div>
     )

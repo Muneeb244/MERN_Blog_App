@@ -28,7 +28,7 @@ function Login() {
     await Axios.post('http://localhost:5000/api/auth/signin', values)
       .then(res => {
         if(res.data?.token) {
-          Cookies.set('token', res.data.token)
+          Cookies.set('token', res.data.token, {expires: 1})
           setIsLoading(false);
           setUserToken(res.data.token)
           return navigate('/')

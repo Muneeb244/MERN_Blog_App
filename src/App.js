@@ -9,20 +9,23 @@ import { useState } from 'react';
 import CreatePost from './pages/main/CreatePost';
 import Post from './pages/main/Post';
 import Edit from './pages/main/Edit';
+import Protected from './components/Protected';
 
 function App() {
 
-  const [user,setUser] = useState({});
-  const [userToken,setUserToken] = useState();
+  const [user, setUser] = useState({});
+  const [userToken, setUserToken] = useState();
 
   return (
-    <UserContext.Provider value={{user, setUser, userToken, setUserToken}}>
+    <UserContext.Provider value={{ user, setUser, userToken, setUserToken }}>
       <Routes>
         <Route path='/' element={<Layout />} >
           <Route path='/' element={<Blogs />} />
           <Route path={'/login'} element={<Login />} />
           <Route path={'/register'} element={<SignUp />} />
-          <Route path={'/create'} element={<CreatePost />} />
+          <Route path={'/create'} element={<Protected>
+            <CreatePost />
+          </Protected>} />
           <Route path={'/post/:id'} element={<Post />} />
           <Route path={'/edit/:id'} element={<Edit />} />
         </Route>

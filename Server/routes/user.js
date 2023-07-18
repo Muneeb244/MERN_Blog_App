@@ -4,20 +4,15 @@ const { User, validateSignup } = require('../models/user');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const bcrypt = require('bcrypt');
+const auth = require('../middleware/auth');
 
 router.get('/', async (req, res) => {
     const user = await User.find({});
     res.json(user);
 });
 
-router.get('/profile', async (req, res) => {
-    const token = req.headers['authorization'];
-    if(!token) return res.json({error: 'No token provided'})
-
-    const decoded = jwt.verify(token, process.env.jwtSecret);
-    if(!decoded) return res.json({error: 'Invalid token'})
-    
-    const user = await User.findById(decoded.id).select('-password');
+router.get('/profile', auth, async (req, res) => {
+    const user = await User.findById(req.user.id).select('-password');
     if(!user) return res.json({error: 'User not found'})
     res.json({user});
 })
@@ -47,6 +42,7 @@ router.post('/signup', async (req, res) => {
 
 router.post('/signin', async (req, res) => {
     const { email, password } = req.body;
+    console.log(email, password)
 
 
     let user = await User.findOne({ email });
