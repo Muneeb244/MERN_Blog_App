@@ -10,6 +10,7 @@ import CreatePost from './pages/main/CreatePost';
 import Post from './pages/main/Post';
 import Edit from './pages/main/Edit';
 import Protected from './components/Protected';
+import NotFound from './pages/main/NotFound';
 
 function App() {
 
@@ -28,6 +29,7 @@ function App() {
           </Protected>} />
           <Route path={'/post/:id'} element={<Post />} />
           <Route path={'/edit/:id'} element={<Edit />} />
+          <Route path='*' element={<NotFound />} />
         </Route>
       </Routes>
     </UserContext.Provider>

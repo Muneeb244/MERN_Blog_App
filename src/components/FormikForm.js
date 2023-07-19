@@ -99,6 +99,8 @@ function FormikForm({ edit, editId }) {
     }
 
     const handleEdit = (values, { resetForm }) => {
+        setMessage(null);
+        setBlog(null);
         const form = new FormData();
         form.set('image', values.image);
         form.set('title', values.title);
@@ -107,13 +109,15 @@ function FormikForm({ edit, editId }) {
         setIsLoading(true);
         setMessage(null);
         try {
-            Axios.put(`http://localhost:5000/api/blog/post/${editId}`, form, {
+            Axios.put(`http://localhost:5000/api/blog/${editId}`, form, {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'multipart/form-data',
+                    'authorization': Cookies.get('token')
                 }
             })
                 .then(res => {
                     if (res.data?.blog) {
+                        setBlog(res.data.blog)
                         setIsLoading(false);
                         setMessage("post updated successfully");
                     }
@@ -138,7 +142,7 @@ function FormikForm({ edit, editId }) {
 
     return (
         <>
-        {!blog && <Lottie animationData={loading} style={{ width: '100%', height: "100vh", position: 'absolute', top: 0, backgroundColor: '#fff', zIndex: 1 }} />}
+        {edit && !blog && <Lottie animationData={loading} style={{ width: '100%', height: "100vh", position: 'absolute', top: 0, backgroundColor: '#fff', zIndex: 1 }} />}
         <Formik
             initialValues={edit ?
                 { title: blog?.title, summary: blog?.summary, description: blog?.description, image: blog?.image }

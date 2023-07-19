@@ -9,7 +9,7 @@ const path = require('path');
 
 const user = require('./routes/user');
 const blog = require('./routes/blog');
-const auth = require('./middleware/auth');
+const ErrorHandler = require('./middleware/ErrorHandler');
 
 mongoose.connect(process.env.mongoURL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to MongoDB...'))
@@ -21,11 +21,9 @@ app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
 app.use('/public/uploads', express.static(path.join(__dirname, '/public/uploads')));
-// app.use(auth)
-
-
 app.use('/api/auth', user);
 app.use('/api/blog', blog);
+app.use(ErrorHandler)
 
 
 const PORT = process.env.PORT;

@@ -6,7 +6,6 @@ function Edit() {
   const location = useLocation();
   const { id } = location.state;
   if(location.pathname.includes('edit')) 
-    // const { id } = location.state;
   return (
     <FormikForm edit={true} editId={id}/>
   )
