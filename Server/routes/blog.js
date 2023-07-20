@@ -72,15 +72,12 @@ router.put('/:id', auth, upload.single('image'), asyncMiddleware(async (req, res
         var imagePath = `${req.protocol}://${req.get('host')}/public/uploads/${image}`;
     }
 
-    const oldBlog = await Blog.findById(req.params.id);
-    if (!oldBlog) return res.status(400).json({ error: 'Something went wrong' });
 
     const blog = await Blog.findByIdAndUpdate(req.params.id, {
-        title: req.body.title || oldBlog.title,
-        summary: req.body.summary || oldBlog.summary,
-        image: imagePath || oldBlog.image,
-        description: req.body.description || oldBlog.description,
-        image: imagePath || oldBlog.image,
+        title: req.body.title,
+        summary: req.body.summary,
+        description: req.body.description,
+        image: imagePath,
     }, { new: true });
     if (!blog) return res.status(400).json({ error: 'Something went wrong' });
     res.json({ blog })

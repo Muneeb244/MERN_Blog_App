@@ -90,20 +90,20 @@ function Post() {
     return (
         <>
             {post ? <div className='my-5 flex flex-col items-center'>
-                <h1 className='text-center text-2xl font-bold'>{post.title}</h1>
-                <p className='text-gray-400 mt-2'>{post.date}</p>
-                <h1 className='text-xl font-bold'>by @{post.author.name}</h1>
+                <h1 className='text-center text-lg md:text-2xl font-bold p-2 lg:p-0'>{post.title}</h1>
+                <span className='text-gray-400 mt-0 lg:mt-2'>{post.date}</span>
+                <h1 className='text-lg lg:text-xl font-bold'>by @{post.author.name}</h1>
                 {
                     post.author._id === user?._id &&
                     <div className='flex'>
                         <Link to={`/edit/${id}`} state={{ id }}>
                             <div className='flex justify-center items-center bg-black p-3 w-fit rounded cursor-pointer mt-1'>
-                                <HiOutlinePencilAlt size={30} color='#fff' />
+                                <HiOutlinePencilAlt size={30} color='#fff' className='w-[20px] lg:w-[30px] mr-1 lg:mr-0' />
                                 <p className='text-white'>edit this post</p>
                             </div>
                         </Link>
                         <div className='flex justify-center items-center bg-black p-3 w-fit rounded cursor-pointer mt-1 ml-3' onClick={deletePost}>
-                            <MdDelete size={30} color='#fff' />
+                            <MdDelete size={30} color='#fff' className='w-[20px] lg:w-[30px] mr-1 lg:mr-0' />
                             <p className='text-white'>delete this post</p>
                         </div>
                         <ToastContainer />
@@ -112,8 +112,8 @@ function Post() {
                         </div>}
                     </div>
                 }
-                <img src={post.image} alt={post.title} className='w-1/2 h-1/4 mx-auto mt-3' />
-                <p className='text-left w-1/2 mx-auto mt-5' dangerouslySetInnerHTML={{ __html: post.description }}></p>
+                <img src={post.image} alt={post.title} className='w-[80%] mx-auto mt-3 xl:w-1/2 ' />
+                <p className='text-left w-[80%] xl:w-1/2 mx-auto mt-5' dangerouslySetInnerHTML={{ __html: post.description }}></p>
             </div>
                 :
                 <Lottie animationData={loading} style={{ width: '100%', height: "80vh" }} />}

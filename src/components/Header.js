@@ -29,13 +29,13 @@ export default function Header() {
     }
 
     return (
-        <header className='flex justify-between p-5 sticky top-0 bg-white shadow'>
+        <header className='flex justify-between items-center p-5 sticky w-full top-0 bg-white shadow z-10'>
             <Link to='./' className='text-lg'>
                 <img src={require('../assets/images/blog.png')} alt='logo' className='w-25 h-10' />
             </Link>
-            <nav className='flex justify-around w-1/6'>
-                <Link to={token ? '/create' : "/login"} className='text-lg font-bold'>{token ? "Create new post" : "Login"}</Link>
-                <Link to={token ? '' : "/register"} className='text-lg font-bold' onClick={token ? logout : ""}>{token ? "logout" : "SignUp"}</Link>
+            <nav className='flex justify-around w-3/6 md:w-2/6 xl:w-3/12'>
+                <Link to={token ? '/create' : "/login"} className='text-sm md:text-md lg:text-lg font-bold'>{token ? "Create new post" : "Login"}</Link>
+                <Link to={token ? '' : "/register"} className='text-sm md:text-md lg:text-lg font-bold' onClick={token ? logout : ""}>{token ? "logout" : "SignUp"}</Link>
             </nav>
         </header>
     )

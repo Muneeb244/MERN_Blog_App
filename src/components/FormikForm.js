@@ -48,7 +48,7 @@ function FormikForm({ edit, editId }) {
 
     const blogSchema = yup.object().shape({
         title: yup.string().required().min(10, "Please write proper title"),
-        summary: yup.string().min(20, "Please write proper summary").required(),
+        summary: yup.string().min(20, "Please write proper summary").required().max(150),
         description: yup.string().min(50, "Please write proper description").required(),
         image: yup.mixed()
             .nullable()
@@ -155,7 +155,7 @@ function FormikForm({ edit, editId }) {
         >
             {({ values, setFieldValue, errors, touched, handleChange, handleBlur, handleSubmit }) => (
                 <form action='' className='flex flex-col items-center justify-items-center'>
-                    <h1 className='text-3xl font-bold mt-10'>{edit ? "Edit post" : "Create new post"}</h1>
+                    <h1 className='text-xl md:text-3xl font-bold mt-10'>{edit ? "Edit post" : "Create new post"}</h1>
                     {message && <h3 className={message === "Something went wrong" ? 'font-bold text-base text-red-500 mt-2' : 'font-bold text-base text-green-500 mt-2'}>{message}</h3>}
                     <input
                         type="text"
@@ -163,7 +163,7 @@ function FormikForm({ edit, editId }) {
                         value={values.title}
                         onChange={handleChange('title')}
                         onBlur={handleBlur('title')}
-                        className='mt-7 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-1/2 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-black'
+                        className='mt-7 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-[80%] xl:w-1/2 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-black'
                     />
                     <ErrorMessage
                         error={errors["title"]}
@@ -176,13 +176,13 @@ function FormikForm({ edit, editId }) {
                         value={values.summary}
                         onChange={handleChange('summary')}
                         onBlur={handleBlur('summary')}
-                        className='mt-7 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-1/2 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-black'
+                        className='mt-7 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-[80%] xl:w-1/2 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-black'
                     />
                     <ErrorMessage
                         error={errors["summary"]}
                         visible={touched["summary"]}
                     />
-                    <input type="file" className="block w-1/2 mt-7 text-sm text-slate-500
+                    <input type="file" className="block w-[80%] xl:w-1/2 mt-7 text-sm text-slate-500
                         file:mr-4 file:py-2 file:px-4
                         file:rounded-full file:border-0
                         file:text-sm file:font-semibold
@@ -200,7 +200,7 @@ function FormikForm({ edit, editId }) {
                         error={errors["image"]}
                         visible={touched["image"]}
                     />
-                    <ReactQuill className='w-1/2 mt-7'
+                    <ReactQuill className='w-[80%] xl:w-1/2 mt-7'
                         onChange={handleChange('description')}
                         // onBlur={handleBlur('description')}
                         value={values.description}
@@ -209,7 +209,7 @@ function FormikForm({ edit, editId }) {
                         error={errors["description"]}
                         visible={touched["description"]}
                     />
-                    <button className='shadow bg-black text-white w-1/2 font-bold py-2 px-4 rounded mt-10 mb-5 flex justify-center' onClick={handleSubmit} type='submit'>
+                    <button className='shadow bg-black text-white w-[80%] xl:w-1/2 font-bold py-2 px-4 rounded mt-10 mb-5 flex justify-center' onClick={handleSubmit} type='submit'>
                         {isLoading ? <ThreeDots stroke='white' fill='white' height={15} /> : edit ? "Edit post" : "Create new post"}
                     </button>
                 </form>

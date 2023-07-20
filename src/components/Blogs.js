@@ -6,7 +6,7 @@ import BlogSkeleton from './BlogSkeleton';
 
 function Blogs() {
 
-    const [blogs, setBlogs] = useState(null);
+    const [blogs, setBlogs] = useState("");
 
     useEffect(() => {
         Axios.get('http://localhost:5000/api/blog')
@@ -44,13 +44,20 @@ function Blogs() {
     //     image: "https://hips.hearstapps.com/hmg-prod/images/woman-meditation-on-an-ocean-side-rock-royalty-free-image-1616630391.?crop=1xw:0.74993xh;center,top&resize=640:*"
     // }
     // ]
+    // if(blogs) {
+    //     return <div className='h-screen flex justify-center items-center'>
 
+    //         <BlogSkeleton />
+    //     </div>
+        
+    // }
     return (
-
-        <div className='flex flex-col w-full h-screen items-center my-5'>
+        // <div></div>
+        <div className='flex flex-col w-full items-center h-screen my-5'>
             {blogs ? blogs.map(blog => (
                 <BlogCard key={blog._id} id={blog._id} image={blog.image} title={blog.title} description={blog.description} summary={blog.summary} author={blog.author.name} date={blog.date} />
             )) : <BlogSkeleton />}
+            {/* <BlogSkeleton /> */}
         </div>
     )
 }
