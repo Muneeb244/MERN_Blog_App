@@ -7,10 +7,6 @@ const bcrypt = require('bcrypt');
 const auth = require('../middleware/auth');
 const asyncMiddleware = require('../middleware/asyncMidleware')
 
-router.get('/', async (req, res) => {
-    const user = await User.find({});
-    res.json(user);
-});
 
 router.get('/profile', auth, asyncMiddleware(async (req, res) => {
     const user = await User.findById(req.user.id).select('-password');

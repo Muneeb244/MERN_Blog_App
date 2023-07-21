@@ -58,11 +58,11 @@ router.post('/post', auth, upload.single('image'), asyncMiddleware(async (req, r
         .catch(error => { console.log(error); res.status(400).json({ error }) })
 }));
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', asyncMiddleware(async (req, res) => {
     const blog = await Blog.findById(req.params.id).populate('author', '_id name');
     if (!blog) return res.status(400).json({ error: 'Something went wrong' });
     res.json({ blog });
-});
+}));
 
 
 
