@@ -36,26 +36,29 @@ router.get('/', asyncMiddleware(async (req, res, next) => {
 }))
 
 
-router.post('/post', auth, upload.single('image'), asyncMiddleware(async (req, res) => {
-    const image = req.file?.filename;
-    if (!image) return res.status(400).send('No image in the request');
-    const imagePath = `${req.protocol}://${req.get('host')}/public/uploads/${image}`;
+// router.post('/post', auth, upload.single('image'), asyncMiddleware(async (req, res) => {
+router.post('/post', auth, asyncMiddleware(async (req, res) => {
 
-    const { error } = blogValidation(req.body);
-    if (error) return res.status(400).json({ error: error.details[0].message });
+    console.log("Body from create psot is:", req.body)
+    // const image = req.file?.filename;
+    // if (!image) return res.status(400).send('No image in the request');
+    // const imagePath = `${req.protocol}://${req.get('host')}/public/uploads/${image}`;
 
-    const blog = new Blog({
-        title: req.body.title,
-        summary: req.body.summary,
-        image: imagePath,
-        description: req.body.description,
-        author: req.user.id
-    });
-    if (!blog) return res.status(400).json({ error: 'Something went wrong' });
+    // const { error } = blogValidation(req.body);
+    // if (error) return res.status(400).json({ error: error.details[0].message });
 
-    blog.save()
-        .then(blog => { res.json({ blog }) })
-        .catch(error => { console.log(error); res.status(400).json({ error }) })
+    // const blog = new Blog({
+    //     title: req.body.title,
+    //     summary: req.body.summary,
+    //     image: imagePath,
+    //     description: req.body.description,
+    //     author: req.user.id
+    // });
+    // if (!blog) return res.status(400).json({ error: 'Something went wrong' });
+
+    // blog.save()
+    //     .then(blog => { res.json({ blog }) })
+    //     .catch(error => { console.log(error); res.status(400).json({ error }) })
 }));
 
 router.get('/:id', asyncMiddleware(async (req, res) => {

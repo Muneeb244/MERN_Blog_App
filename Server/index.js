@@ -11,7 +11,9 @@ const user = require('./routes/user');
 const blog = require('./routes/blog');
 const ErrorHandler = require('./middleware/ErrorHandler');
 
+
 mongoose.connect(process.env.mongoURL, { useNewUrlParser: true, useUnifiedTopology: true })
+// mongoose.connect("mongodb://localhost:27017", { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to MongoDB...'))
     .catch(err => console.log('Could not connect to MongoDB...', err));
 

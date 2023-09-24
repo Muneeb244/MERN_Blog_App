@@ -8,6 +8,8 @@ const auth = require('../middleware/auth');
 const asyncMiddleware = require('../middleware/asyncMidleware')
 
 
+
+
 router.get('/profile', auth, asyncMiddleware(async (req, res) => {
     const user = await User.findById(req.user.id).select('-password');
     if (!user) return res.json({ error: 'User not found' })
@@ -39,8 +41,6 @@ router.post('/signup', asyncMiddleware(async (req, res) => {
 
 router.post('/signin', asyncMiddleware(async (req, res) => {
     const { email, password } = req.body;
-    console.log(email, password)
-
 
     let user = await User.findOne({ email });
     if (!user) return res.json({ error: 'Invalid email/password' })

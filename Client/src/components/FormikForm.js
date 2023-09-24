@@ -18,9 +18,6 @@ function FormikForm({ edit, editId }) {
     // const { user, setUser, userToken } = useContext(UserContext);
     const [blog, setBlog] = useState(null);
 
-
-    const navigate = useNavigate();
-
     const ref = React.useRef();
 
     useEffect(() => {
@@ -44,6 +41,29 @@ function FormikForm({ edit, editId }) {
     }, [])
 
 
+    const imageUpload = async (image) => {
+        setIsLoading(true)
+        setMessage(null);
+        const data = new FormData();
+        data.append('file', image);
+        data.append('upload_preset', 'dpivkpad3');
+        try {
+            let res = await fetch('https://api.cloudinary.com/v1_1/dpivkpad3/image/upload', {
+                method: 'POST',
+                body: data
+            })
+            res = await res.json();
+            alert("hogaya upload")
+            return res.url;
+        } catch (error) {
+            setIsLoading(false)
+            console.log("from cloudinary", error)
+            setMessage('Something went wrong');
+        }
+    }
+
+
+
     const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/png'];
 
     const blogSchema = yup.object().shape({
@@ -62,12 +82,20 @@ function FormikForm({ edit, editId }) {
 
     const handleSubmit = async (values, { resetForm }) => {
         const form = new FormData();
-        form.set('image', values.image);
+        const url = await imageUpload(values.image);
+        if(!url) {
+            setMessage("Something went wrong");
+            console.log("inside url if", url)
+            return;
+        }
+        console.log("outside url if", url)
+        form.set('image', url);
         form.set('title', values.title);
         form.set('summary', values.summary);
         form.set('description', values.description);
-        setIsLoading(true);
-        setMessage(null);
+        console.log("Form from handlesubmit is:",form, values)
+        // setIsLoading(true);
+        // setMessage(null);
         try {
             Axios.post('http://localhost:5000/api/blog/post', form, {
                 headers: {
@@ -91,11 +119,11 @@ function FormikForm({ edit, editId }) {
                     setIsLoading(false);
                 })
         } catch (error) {
-            console.log("from create first catch", error)
+            console.log("from create second catch", error)
             setMessage("Something went wrong");
             setIsLoading(false);
         }
-        resetForm();
+        // resetForm();
     }
 
     const handleEdit = (values, { resetForm }) => {
