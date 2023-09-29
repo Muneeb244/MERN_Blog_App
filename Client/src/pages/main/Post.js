@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { HiOutlinePencilAlt } from "react-icons/hi";
 import { MdDelete } from "react-icons/md";
 import UserContext from '../../context/UserContext';
@@ -10,6 +10,7 @@ import deleted from '../../lottieFile/deleted.json';
 import Cookies from 'js-cookie';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import SocialSection from '../../components/SocialSection';
 
 function Post() {
 
@@ -112,7 +113,10 @@ function Post() {
                         </div>}
                     </div>
                 }
-                <img src={post.image} alt={post.title} className='w-[80%] mx-auto mt-3 xl:w-1/2 ' />
+                <div className='flex justify-center w-[80%] mt-3 xl:w-1/2 mx-auto space-x-3'>
+                    <img src={post.image} alt={post.title} className='w-[80%]' />
+                    <SocialSection id={id} userId={user?._id} likedBy={post.likedBy} />
+                </div>
                 <p className='text-left w-[80%] xl:w-1/2 mx-auto mt-5' dangerouslySetInnerHTML={{ __html: post.description }}></p>
             </div>
                 :

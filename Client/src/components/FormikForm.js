@@ -53,7 +53,6 @@ function FormikForm({ edit, editId }) {
                 body: data
             })
             res = await res.json();
-            alert("hogaya upload")
             return res.url;
         } catch (error) {
             setIsLoading(false)
@@ -81,25 +80,18 @@ function FormikForm({ edit, editId }) {
 
 
     const handleSubmit = async (values, { resetForm }) => {
-        const form = new FormData();
         const url = await imageUpload(values.image);
         if(!url) {
             setMessage("Something went wrong");
-            console.log("inside url if", url)
             return;
         }
-        console.log("outside url if", url)
-        form.set('image', url);
-        form.set('title', values.title);
-        form.set('summary', values.summary);
-        form.set('description', values.description);
-        console.log("Form from handlesubmit is:",form, values)
-        // setIsLoading(true);
-        // setMessage(null);
+        values.image = url;
+        setIsLoading(true);
+        setMessage(null);
         try {
-            Axios.post('http://localhost:5000/api/blog/post', form, {
+            Axios.post('http://localhost:5000/api/blog/post', JSON.stringify(values), {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                    'Content-Type': 'application/JSON',
                     'authorization': Cookies.get('token')
                 }
             })
@@ -123,23 +115,23 @@ function FormikForm({ edit, editId }) {
             setMessage("Something went wrong");
             setIsLoading(false);
         }
-        // resetForm();
+        resetForm();
+        ref.current.value = null;
     }
 
-    const handleEdit = (values, { resetForm }) => {
-        setMessage(null);
-        setBlog(null);
-        const form = new FormData();
-        form.set('image', values.image);
-        form.set('title', values.title);
-        form.set('summary', values.summary);
-        form.set('description', values.description);
+    const handleEdit = async (values, { resetForm }) => {
+        const url = await imageUpload(values.image);
+        if(!url) {
+            setMessage("Something went wrong");
+            return;
+        }
+        values.image = url;
         setIsLoading(true);
         setMessage(null);
         try {
-            Axios.put(`http://localhost:5000/api/blog/${editId}`, form, {
+            Axios.put(`http://localhost:5000/api/blog/${editId}`, JSON.stringify(values), {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                    'Content-Type': 'application/JSON',
                     'authorization': Cookies.get('token')
                 }
             })

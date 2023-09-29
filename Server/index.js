@@ -10,6 +10,7 @@ const path = require('path');
 const user = require('./routes/user');
 const blog = require('./routes/blog');
 const ErrorHandler = require('./middleware/ErrorHandler');
+const like = require('./routes/Like');
 
 
 mongoose.connect(process.env.mongoURL, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -22,9 +23,10 @@ app.use(morgan('tiny'));
 app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
-app.use('/public/uploads', express.static(path.join(__dirname, '/public/uploads')));
+// app.use('/public/uploads', express.static(path.join(__dirname, '/public/uploads')));
 app.use('/api/auth', user);
 app.use('/api/blog', blog);
+app.use('/api/like', like)
 app.use(ErrorHandler)
 
 

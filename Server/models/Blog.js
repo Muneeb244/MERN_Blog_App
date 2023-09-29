@@ -3,29 +3,35 @@ const joi = require('joi');
 
 const blogSchema = new mongoose.Schema({
     title: {
-        type: "String",
+        type: String,
         required: true,
     },
     summary: {
-        type: "String",
+        type: String,
         required: true,
     },
     image: {
-        type: "String",
+        type: String,
         required: true,
     },
     description: {
-        type: "String",
+        type: String,
         required: true,
     },
     date: {
         type: Date,
-        default: Date.now()
+        default: Date.now(),
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }
+        ref: 'User',
+    },
+    likedBy: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Like',
+        },
+    ],
 });
 
 const blogValidation = (blog) => {
@@ -33,6 +39,7 @@ const blogValidation = (blog) => {
         title: joi.string().required().min(3),
         summary: joi.string().required().min(10),
         description: joi.string().required().min(50),
+        image: joi.string().required(),
     })
     return schema.validate(blog);
 }

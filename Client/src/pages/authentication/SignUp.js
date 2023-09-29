@@ -31,7 +31,7 @@ function SignUp() {
       .then(res => {
         if(res.data?.token) {
           setIsLoading(false);
-          setMessage("Login successfully")
+          setMessage("Signup successfully")
           return setToken(res.data.token)
         }
         if(res.data?.error) {
