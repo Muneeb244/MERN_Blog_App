@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { HiOutlineHeart, HiHeart } from "react-icons/hi";
 import { BiMessageRounded } from "react-icons/bi";
 import { useSpring, animated } from 'react-spring';
@@ -26,7 +26,7 @@ function SocialSection({ id, userId, likedBy }) {
     const likePost = () => {
         if (!token) return alert("Please login first")
         setLiked(true);
-        Axios.post(`http://localhost:5000/api/like/${id}`, null, {
+        Axios.post(`/like/${id}`, null, {
             headers: {
                 'authorization': token
             }
@@ -46,7 +46,7 @@ function SocialSection({ id, userId, likedBy }) {
     const unLikePost = () => {
         if (!token) return alert("Please login first")
         setLiked(false);
-        Axios.delete(`http://localhost:5000/api/like/${id}`, {
+        Axios.delete(`/like/${id}`, {
             headers: {
                 'authorization': token
             }

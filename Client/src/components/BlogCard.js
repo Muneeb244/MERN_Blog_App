@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import CommentSection from './CommentSection';
 
 function BlogCard({ image, title, summary, author, date, id}) {
 

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import * as yup from 'yup';
 import { Formik } from "formik";
 import ErrorMessage from './ErrorMessage';
@@ -7,7 +7,6 @@ import { ThreeDots } from 'react-loading-icons';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 // import UserContext from '../context/UserContext';
-import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import Lottie from 'lottie-react';
 import loading from '../lottieFile/loading.json';
@@ -24,21 +23,19 @@ function FormikForm({ edit, editId }) {
         document.title = "Create Post";
 
         try {
-            {
-                editId && Axios.get(`http://localhost:5000/api/blog/${editId}`)
-                    .then(res => {
-                        setBlog(res.data.blog)
-                    })
-                    .catch(err => {
-                        console.log(err)
-                        // setMessage("Something went wrong");
-                        // navigate('/login');
-                    })
-            }
+            editId && Axios.get(`/blog/${editId}`)
+                .then(res => {
+                    setBlog(res.data.blog)
+                })
+                .catch(err => {
+                    console.log(err)
+                    // setMessage("Something went wrong");
+                    // navigate('/login');
+                })
         } catch (error) {
             console.log("from form main catch:", error)
         }
-    }, [])
+    }, [editId])
 
 
     const imageUpload = async (image) => {
@@ -81,7 +78,7 @@ function FormikForm({ edit, editId }) {
 
     const handleSubmit = async (values, { resetForm }) => {
         const url = await imageUpload(values.image);
-        if(!url) {
+        if (!url) {
             setMessage("Something went wrong");
             return;
         }
@@ -89,7 +86,7 @@ function FormikForm({ edit, editId }) {
         setIsLoading(true);
         setMessage(null);
         try {
-            Axios.post('http://localhost:5000/api/blog/post', JSON.stringify(values), {
+            Axios.post('/blog/post', JSON.stringify(values), {
                 headers: {
                     'Content-Type': 'application/JSON',
                     'authorization': Cookies.get('token')
@@ -121,7 +118,7 @@ function FormikForm({ edit, editId }) {
 
     const handleEdit = async (values, { resetForm }) => {
         const url = await imageUpload(values.image);
-        if(!url) {
+        if (!url) {
             setMessage("Something went wrong");
             return;
         }
@@ -129,7 +126,7 @@ function FormikForm({ edit, editId }) {
         setIsLoading(true);
         setMessage(null);
         try {
-            Axios.put(`http://localhost:5000/api/blog/${editId}`, JSON.stringify(values), {
+            Axios.put(`/blog/${editId}`, JSON.stringify(values), {
                 headers: {
                     'Content-Type': 'application/JSON',
                     'authorization': Cookies.get('token')
@@ -162,79 +159,79 @@ function FormikForm({ edit, editId }) {
 
     return (
         <>
-        {edit && !blog && <Lottie animationData={loading} style={{ width: '100%', height: "100vh", position: 'absolute', top: 0, backgroundColor: '#fff', zIndex: 1 }} />}
-        <Formik
-            initialValues={edit ?
-                { title: blog?.title, summary: blog?.summary, description: blog?.description, image: blog?.image }
-                :
-                { title: "", summary: "", description: "", image: "" }
-            }
-            validationSchema={!edit && blogSchema}
-            onSubmit={edit ? handleEdit : handleSubmit}
-            enableReinitialize={true}
-        >
-            {({ values, setFieldValue, errors, touched, handleChange, handleBlur, handleSubmit }) => (
-                <form action='' className='flex flex-col items-center justify-items-center'>
-                    <h1 className='text-xl md:text-3xl font-bold mt-10'>{edit ? "Edit post" : "Create new post"}</h1>
-                    {message && <h3 className={message === "Something went wrong" ? 'font-bold text-base text-red-500 mt-2' : 'font-bold text-base text-green-500 mt-2'}>{message}</h3>}
-                    <input
-                        type="text"
-                        placeholder='title'
-                        value={values.title}
-                        onChange={handleChange('title')}
-                        onBlur={handleBlur('title')}
-                        className='mt-7 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-[80%] xl:w-1/2 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-black'
-                    />
-                    <ErrorMessage
-                        error={errors["title"]}
-                        visible={touched["title"]}
-                    />
+            {edit && !blog && <Lottie animationData={loading} style={{ width: '100%', height: "100vh", position: 'absolute', top: 0, backgroundColor: '#fff', zIndex: 1 }} />}
+            <Formik
+                initialValues={edit ?
+                    { title: blog?.title, summary: blog?.summary, description: blog?.description, image: blog?.image }
+                    :
+                    { title: "", summary: "", description: "", image: "" }
+                }
+                validationSchema={!edit && blogSchema}
+                onSubmit={edit ? handleEdit : handleSubmit}
+                enableReinitialize={true}
+            >
+                {({ values, setFieldValue, errors, touched, handleChange, handleBlur, handleSubmit }) => (
+                    <form action='' className='flex flex-col items-center justify-items-center'>
+                        <h1 className='text-xl md:text-3xl font-bold mt-10'>{edit ? "Edit post" : "Create new post"}</h1>
+                        {message && <h3 className={message === "Something went wrong" ? 'font-bold text-base text-red-500 mt-2' : 'font-bold text-base text-green-500 mt-2'}>{message}</h3>}
+                        <input
+                            type="text"
+                            placeholder='title'
+                            value={values.title}
+                            onChange={handleChange('title')}
+                            onBlur={handleBlur('title')}
+                            className='mt-7 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-[80%] xl:w-1/2 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-black'
+                        />
+                        <ErrorMessage
+                            error={errors["title"]}
+                            visible={touched["title"]}
+                        />
 
-                    <input
-                        type="text"
-                        placeholder='summary'
-                        value={values.summary}
-                        onChange={handleChange('summary')}
-                        onBlur={handleBlur('summary')}
-                        className='mt-7 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-[80%] xl:w-1/2 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-black'
-                    />
-                    <ErrorMessage
-                        error={errors["summary"]}
-                        visible={touched["summary"]}
-                    />
-                    <input type="file" className="block w-[80%] xl:w-1/2 mt-7 text-sm text-slate-500
+                        <input
+                            type="text"
+                            placeholder='summary'
+                            value={values.summary}
+                            onChange={handleChange('summary')}
+                            onBlur={handleBlur('summary')}
+                            className='mt-7 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-[80%] xl:w-1/2 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-black'
+                        />
+                        <ErrorMessage
+                            error={errors["summary"]}
+                            visible={touched["summary"]}
+                        />
+                        <input type="file" className="block w-[80%] xl:w-1/2 mt-7 text-sm text-slate-500
                         file:mr-4 file:py-2 file:px-4
                         file:rounded-full file:border-0
                         file:text-sm file:font-semibold
                         file:bg-violet-50 file:text-black-700
                         hover:file:bg-gray-200
                         "
-                        name='image'
-                        ref={ref}
-                        onChange={(event) => {
-                            setFieldValue("image", event.currentTarget.files[0]);
-                        }}
-                        onBlur={handleBlur('image')}
-                    />
-                    <ErrorMessage
-                        error={errors["image"]}
-                        visible={touched["image"]}
-                    />
-                    <ReactQuill className='w-[80%] xl:w-1/2 mt-7'
-                        onChange={handleChange('description')}
-                        // onBlur={handleBlur('description')}
-                        value={values.description}
-                    />
-                    <ErrorMessage
-                        error={errors["description"]}
-                        visible={touched["description"]}
-                    />
-                    <button className='shadow bg-black text-white w-[80%] xl:w-1/2 font-bold py-2 px-4 rounded mt-10 mb-5 flex justify-center' onClick={handleSubmit} type='submit'>
-                        {isLoading ? <ThreeDots stroke='white' fill='white' height={15} /> : edit ? "Edit post" : "Create new post"}
-                    </button>
-                </form>
-            )}
-        </Formik>
+                            name='image'
+                            ref={ref}
+                            onChange={(event) => {
+                                setFieldValue("image", event.currentTarget.files[0]);
+                            }}
+                            onBlur={handleBlur('image')}
+                        />
+                        <ErrorMessage
+                            error={errors["image"]}
+                            visible={touched["image"]}
+                        />
+                        <ReactQuill className='w-[80%] xl:w-1/2 mt-7'
+                            onChange={handleChange('description')}
+                            // onBlur={handleBlur('description')}
+                            value={values.description}
+                        />
+                        <ErrorMessage
+                            error={errors["description"]}
+                            visible={touched["description"]}
+                        />
+                        <button className='shadow bg-black text-white w-[80%] xl:w-1/2 font-bold py-2 px-4 rounded mt-10 mb-5 flex justify-center' onClick={handleSubmit} type='submit'>
+                            {isLoading ? <ThreeDots stroke='white' fill='white' height={15} /> : edit ? "Edit post" : "Create new post"}
+                        </button>
+                    </form>
+                )}
+            </Formik>
         </>
     )
 }

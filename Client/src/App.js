@@ -11,11 +11,13 @@ import Post from './pages/main/Post';
 import Edit from './pages/main/Edit';
 import Protected from './components/Protected';
 import NotFound from './pages/main/NotFound';
+import Axios from 'axios'
 
 function App() {
 
   const [user, setUser] = useState({});
   const [userToken, setUserToken] = useState();
+  Axios.defaults.baseURL = "http://localhost:5000/api";
 
   return (
     <UserContext.Provider value={{ user, setUser, userToken, setUserToken }}>

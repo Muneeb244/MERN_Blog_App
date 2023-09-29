@@ -11,6 +11,7 @@ import Cookies from 'js-cookie';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import SocialSection from '../../components/SocialSection';
+import CommentSection from '../../components/CommentSection';
 
 function Post() {
 
@@ -86,8 +87,6 @@ function Post() {
     }
 
 
-
-
     return (
         <>
             {post ? <div className='my-5 flex flex-col items-center'>
@@ -118,6 +117,7 @@ function Post() {
                     <SocialSection id={id} userId={user?._id} likedBy={post.likedBy} />
                 </div>
                 <p className='text-left w-[80%] xl:w-1/2 mx-auto mt-5' dangerouslySetInnerHTML={{ __html: post.description }}></p>
+                <CommentSection blogId={id} userId={user?._id} />
             </div>
                 :
                 <Lottie animationData={loading} style={{ width: '100%', height: "80vh" }} />}

@@ -7,14 +7,15 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const path = require('path');
 
+const ErrorHandler = require('./middleware/ErrorHandler');
+
 const user = require('./routes/user');
 const blog = require('./routes/blog');
-const ErrorHandler = require('./middleware/ErrorHandler');
 const like = require('./routes/Like');
+const comments = require('./routes/comments');
 
 
 mongoose.connect(process.env.mongoURL, { useNewUrlParser: true, useUnifiedTopology: true })
-// mongoose.connect("mongodb://localhost:27017", { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to MongoDB...'))
     .catch(err => console.log('Could not connect to MongoDB...', err));
 
@@ -27,6 +28,7 @@ app.use(cookieParser());
 app.use('/api/auth', user);
 app.use('/api/blog', blog);
 app.use('/api/like', like)
+app.use('/api/comment', comments)
 app.use(ErrorHandler)
 
 
