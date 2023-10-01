@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useRef } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { HiOutlinePencilAlt } from "react-icons/hi";
 import { MdDelete } from "react-icons/md";
@@ -23,19 +23,30 @@ function Post() {
     const [del, setDel] = useState(false);
     const location = useLocation();
     const { id } = location.state;
+    const token = Cookies.get("token")
 
     useEffect(() => {
-        if (Cookies.get('token')) {
+
+
+        if (token) {
             userData();
         }
         blogPost();
 
     }, []);
 
+    const commentSectionRef = useRef(null);
+
+    const scrollToCommentSection = () => {
+        if (commentSectionRef.current) {
+            commentSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     const userData = () => {
         Axios.get('http://localhost:5000/api/auth/profile', {
             headers: {
-                'authorization': Cookies.get('token')
+                'authorization': token
             }
         })
             .then(res => {
@@ -49,7 +60,7 @@ function Post() {
     const blogPost = () => {
         Axios.get(`http://localhost:5000/api/blog/${id}`, {
             headers: {
-                'authorization': userToken
+                'authorization': token
             }
         })
             .then(res => {
@@ -65,7 +76,7 @@ function Post() {
     const deletePost = () => {
         Axios.delete(`http://localhost:5000/api/blog/${id}`, {
             headers: {
-                'authorization': Cookies.get('token')
+                'authorization': token
             }
         })
             .then(res => {
@@ -114,10 +125,12 @@ function Post() {
                 }
                 <div className='flex justify-center w-[80%] mt-3 xl:w-1/2 mx-auto space-x-3'>
                     <img src={post.image} alt={post.title} className='w-[80%]' />
-                    <SocialSection id={id} userId={user?._id} likedBy={post.likedBy} />
+                    {token && <SocialSection id={id} userId={user?._id} likedBy={post.likedBy} scrollToCommentSection={scrollToCommentSection} />}
                 </div>
                 <p className='text-left w-[80%] xl:w-1/2 mx-auto mt-5' dangerouslySetInnerHTML={{ __html: post.description }}></p>
-                <CommentSection blogId={id} userId={user?._id} />
+                <div ref={commentSectionRef} className='w-full flex justify-center'>
+                    {token && <CommentSection blogId={id} userId={user?._id} />}
+                </div>
             </div>
                 :
                 <Lottie animationData={loading} style={{ width: '100%', height: "80vh" }} />}

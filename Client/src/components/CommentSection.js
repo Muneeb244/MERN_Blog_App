@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
 import { IoSend } from "react-icons/io5";
 import { AiFillDelete } from "react-icons/ai";
+import Cookies from 'js-cookie';
 
 
 function CommentSection({ blogId, userId }) {
@@ -24,17 +25,20 @@ function CommentSection({ blogId, userId }) {
             text: newComment,
             user: userId,
             blog: blogId,
+        }, {
+            headers: {
+                'authorization': Cookies.get("token")
+            }
         })
             .then((res) => {
                 setComments([...comments, res.data]);
-                alert("hogaya comment")
                 setNewComment('');
             })
             .catch((error) => console.error(error));
     };
 
     const handleCommentDelete = (commentId) => {
-        Axios.delete(`/comments/${commentId}`)
+        Axios.delete(`/comment/${commentId}`)
             .then(() => {
                 setComments(comments.filter((comment) => comment._id !== commentId));
             })

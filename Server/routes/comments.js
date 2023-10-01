@@ -1,11 +1,10 @@
-// routes/comments.js
-
 const express = require('express');
 const router = express.Router();
-const Comments = require('../models/Comments'); // Your Comment model
+const Comments = require('../models/Comments');
+const auth = require('../middleware/auth')
 
 // Create a new comment
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
   try {
     const { text, user, blog } = req.body;
     const comment = new Comments({ text, user, blog });

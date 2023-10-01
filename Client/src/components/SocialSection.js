@@ -6,7 +6,7 @@ import Cookies from 'js-cookie';
 import Axios from 'axios';
 
 
-function SocialSection({ id, userId, likedBy }) {
+function SocialSection({ id, userId, likedBy, scrollToCommentSection }) {
     const [liked, setLiked] = useState(likedBy.includes(userId));
 
 
@@ -63,12 +63,6 @@ function SocialSection({ id, userId, likedBy }) {
             )
     }
 
-    const scrollToBottom = () => {
-        window.scrollTo({
-          top: document.documentElement.scrollHeight,
-          behavior: 'smooth', // This creates a smooth scrolling effect
-        });
-      };
 
 
 
@@ -83,7 +77,7 @@ function SocialSection({ id, userId, likedBy }) {
             >
                 <Icon size={30} color={IconColor} className='w-[20px] lg:w-[30px]' />
             </animated.div>
-            <BiMessageRounded size={30} color='#000' className='w-[20px] lg:w-[30px] cursor-pointer' onClick={scrollToBottom} />
+            <BiMessageRounded size={30} color='#000' className='w-[20px] lg:w-[30px] cursor-pointer' onClick={scrollToCommentSection} />
         </div>
     );
 }
